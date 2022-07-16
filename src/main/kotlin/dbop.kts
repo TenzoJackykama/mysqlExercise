@@ -32,11 +32,30 @@ fun main() {
     println("Hello World!")
     DbUtils.getParameters("jdbc:mysql://localhost:3306/newdb", "developer", "Developer123#")
 
-
+    /*val table = "CREATE TABLE student " +
+            "(student_id INT AUTO_INCREMENT PRIMARY KEY, " +
+            "last_name VARCHAR(30), " +
+            "first_name VARCHAR(30));";*/
 
     try {
         val connection = DbUtils.connectToJdbcDatabase()
         println("connection to database: ${connection.catalog}")
+        val stm = connection.createStatement()
+        val dbmControl = connection.metaData
+        val existentTable = dbmControl.getTables(null, null, "student", null)
+        //stm.executeUpdate(table)
+        val resultAllTable = stm.executeQuery( "SHOW TABLES;")
+        println("check name all tables")
+        while (resultAllTable.next()){
+            println(resultAllTable.getString(1))
+        }
+        if (existentTable.next()){
+            println("esiste")
+        }else{
+            println("non esiste")
+        }
+        println("Created table in given database...")
+
     }catch (e: SQLException){
         println("connection to database: ${e.message}")
     }

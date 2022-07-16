@@ -32,6 +32,8 @@ fun main() {
     println("Hello World!")
     DbUtils.getParameters("jdbc:mysql://localhost:3306/newdb", "developer", "Developer123#")
 
+
+
     try {
         val connection = DbUtils.connectToJdbcDatabase()
         println("connection to database: ${connection.catalog}")

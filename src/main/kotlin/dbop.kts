@@ -27,62 +27,78 @@ object DbUtils{
         return con
     }
 }
+object Query{
 
+    var name: String? = null
+    var surname: String? = null
+
+    val table = "CREATE TABLE student " +
+            "(student_id INT AUTO_INCREMENT PRIMARY KEY, " +
+            "last_name VARCHAR(30), " +
+            "first_name VARCHAR(30));"
+    val showTableRecord = "SELECT * FROM student;"
+
+    val Select = "SELECT first_name, last_name FROM student"
+}
 fun main() {
     println("Hello World!")
     DbUtils.getParameters("jdbc:mysql://localhost:3306/newdb", "root", "eciw#ViniSp123")
-    var name: String = "fgvsdagv"
-    var surname: String = "SGVVDSFG"
-
-    /*val table = "CREATE TABLE student " +
-            "(student_id INT AUTO_INCREMENT PRIMARY KEY, " +
-            "last_name VARCHAR(30), " +
-            "first_name VARCHAR(30));";*/
 
 
+    /*
+      try {
+          val connection = DbUtils.connectToJdbcDatabase()
+          println("connection to database: ${connection.catalog}")
+          val stm = connection.createStatement()
+         // val dbmControl = connection.metaData
+         // val existentTable = dbmControl.getTables(null, null, "student", null)
+          //stm.executeUpdate(table)
 
-    val showTableRecord = "SELECT * FROM student;"
+          resultSet.getString("first_name")
+          println("check name all tables")
 
-    try {
-        val connection = DbUtils.connectToJdbcDatabase()
-        println("connection to database: ${connection.catalog}")
-        val stm = connection.createStatement()
-        val dbmControl = connection.metaData
-        val existentTable = dbmControl.getTables(null, null, "student", null)
-        //stm.executeUpdate(table)
-        val resultAllTable = stm.executeQuery( "SHOW TABLES;")
-        println("check name all tables")
-
-        while (resultAllTable.next()){
-            println(resultAllTable.getString(1))
-        }
-        if (existentTable.next()){
-            println("esiste")
-        }else{
-            println("non esiste")
-        }
-        println("Created table in given database...")
-
+          while (resultAllTable.next()){
+              println(resultAllTable.getString(1))
+          }
+          if (existentTable.next()){
+              println("esiste")
+          }else{
+              println("non esiste")
+          }
+          println("Created table in given database...")
 
 
     }catch (e: SQLException){
         println("connection to database: ${e.message}")
     }
+     */
 
     try {
         println("Fill records...")
 
         val connection = DbUtils.connectToJdbcDatabase()
         val stm = connection.createStatement()
-        for (i in 1..3){
-            name = readLine()!!.toString()
-            surname = readLine()!!.toString()
+        /*for (i in 1..3){
+            Query.name = readLine()!!.toString()
+            Query.surname = readLine()!!.toString()
             val insertUserQuery = "INSERT INTO student (last_name, first_name) \n" +
-                    "VALUES ('${surname}', '${name}');"
+                    "VALUES ('${Query.surname}', '${Query.name}');"
             stm.executeUpdate(insertUserQuery)
-        }
+        }*/
 
-        stm.executeQuery(showTableRecord)
+        //stm.executeQuery(Query.showTableRecord)
+
+        val resultSet = stm.executeQuery(Query.Select)
+        val surname = ArrayList<String>()
+
+        while (resultSet.next()){
+            println(resultSet.getString("first_name"))
+            surname.add(resultSet.getString("last_name"))
+        }
+        println("only surname from surname array list")
+        for (i in surname){
+            println(i)
+        }
     }catch (e: SQLException){
         println("connection to database: ${e.message}")
     }

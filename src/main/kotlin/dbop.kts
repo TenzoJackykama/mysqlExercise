@@ -31,15 +31,20 @@ object Query{
 
     var name: String? = null
     var surname: String? = null
+    var countryName: String? = null
 
     val table = "CREATE TABLE student " +
             "(student_id INT AUTO_INCREMENT PRIMARY KEY, " +
             "last_name VARCHAR(30), " +
-            "first_name VARCHAR(30));"
-    val showTableRecord = "SELECT * FROM student;"
+            "first_name VARCHAR(30))"
+
+    val showTableRecord = "SELECT * FROM student"
 
     val Select = "SELECT first_name, last_name FROM student"
+
+    val addColumn = "ALTER TABLE student ADD country varchar(30)"
 }
+
 fun main() {
     println("Hello World!")
     DbUtils.getParameters("jdbc:mysql://localhost:3306/newdb", "root", "eciw#ViniSp123")
@@ -99,6 +104,13 @@ fun main() {
         for (i in surname){
             println(i)
         }
+
+        //stm.executeUpdate(Query.addColumn)
+
+        stm.executeUpdate("UPDATE student SET country='Italy' WHERE student_id < 7")
+        stm.executeUpdate("UPDATE student SET country='Germany' WHERE student_id > 6")
+
+
     }catch (e: SQLException){
         println("connection to database: ${e.message}")
     }

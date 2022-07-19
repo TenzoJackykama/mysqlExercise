@@ -30,12 +30,18 @@ object DbUtils{
 
 fun main() {
     println("Hello World!")
-    DbUtils.getParameters("jdbc:mysql://localhost:3306/newdb", "developer", "Developer123#")
+    DbUtils.getParameters("jdbc:mysql://localhost:3306/newdb", "root", "eciw#ViniSp123")
+    var name: String = "fgvsdagv"
+    var surname: String = "SGVVDSFG"
 
     /*val table = "CREATE TABLE student " +
             "(student_id INT AUTO_INCREMENT PRIMARY KEY, " +
             "last_name VARCHAR(30), " +
             "first_name VARCHAR(30));";*/
+
+
+
+    val showTableRecord = "SELECT * FROM student;"
 
     try {
         val connection = DbUtils.connectToJdbcDatabase()
@@ -46,6 +52,7 @@ fun main() {
         //stm.executeUpdate(table)
         val resultAllTable = stm.executeQuery( "SHOW TABLES;")
         println("check name all tables")
+
         while (resultAllTable.next()){
             println(resultAllTable.getString(1))
         }
@@ -56,9 +63,30 @@ fun main() {
         }
         println("Created table in given database...")
 
+
+
     }catch (e: SQLException){
         println("connection to database: ${e.message}")
     }
+
+    try {
+        println("Fill records...")
+
+        val connection = DbUtils.connectToJdbcDatabase()
+        val stm = connection.createStatement()
+        for (i in 1..3){
+            name = readLine()!!.toString()
+            surname = readLine()!!.toString()
+            val insertUserQuery = "INSERT INTO student (last_name, first_name) \n" +
+                    "VALUES ('${surname}', '${name}');"
+            stm.executeUpdate(insertUserQuery)
+        }
+
+        stm.executeQuery(showTableRecord)
+    }catch (e: SQLException){
+        println("connection to database: ${e.message}")
+    }
+
 }
 
 main()

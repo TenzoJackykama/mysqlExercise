@@ -1,6 +1,7 @@
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
+import java.sql.Statement
 
 object DbUtils{
 
@@ -27,11 +28,20 @@ object DbUtils{
         return con
     }
 }
+
+data class Students(
+    val name: String,
+    val surname: String
+)
+
 object Query{
 
     var name: String? = null
     var surname: String? = null
     var countryName: String? = null
+
+    lateinit var stm: Statement
+
 
     val table = "CREATE TABLE student " +
             "(student_id INT AUTO_INCREMENT PRIMARY KEY, " +
@@ -43,72 +53,47 @@ object Query{
     val Select = "SELECT first_name, last_name FROM student"
 
     val addColumn = "ALTER TABLE student ADD country varchar(30)"
+
+    val viewItaly = "CREATE VIEW italian_students AS SELECT * FROM student WHERE country='Italy'"
+
+    val viewGerman = "CREATE VIEW german_students AS SELECT * FROM student WHERE country='Germany'"
+
+    fun italianStudentsSelectView(italianList: ArrayList<Students>, connection: Connection): ArrayList<Students> {
+        stm = connection.createStatement()
+        var selectResult = stm.executeQuery("SELECT * FROM italian_students")
+        while (selectResult.next()){
+            italianList.add(Students(selectResult.getString("first_name"), selectResult.getString("last_name")))
+        }
+        return italianList
+    }
+
+    fun germanStudentsSelectView(germanList: ArrayList<Students>, connection: Connection): ArrayList<Students> {
+        stm = connection.createStatement()
+        var selectResult = stm.executeQuery("SELECT * FROM german_students")
+        while (selectResult.next()){
+           germanList.add(Students(selectResult.getString("first_name"), selectResult.getString("last_name")))
+        }
+        return germanList
+    }
 }
 
 fun main() {
     println("Hello World!")
     DbUtils.getParameters("jdbc:mysql://localhost:3306/newdb", "root", "eciw#ViniSp123")
-
-
-    /*
-      try {
-          val connection = DbUtils.connectToJdbcDatabase()
-          println("connection to database: ${connection.catalog}")
-          val stm = connection.createStatement()
-         // val dbmControl = connection.metaData
-         // val existentTable = dbmControl.getTables(null, null, "student", null)
-          //stm.executeUpdate(table)
-
-          resultSet.getString("first_name")
-          println("check name all tables")
-
-          while (resultAllTable.next()){
-              println(resultAllTable.getString(1))
-          }
-          if (existentTable.next()){
-              println("esiste")
-          }else{
-              println("non esiste")
-          }
-          println("Created table in given database...")
-
-
-    }catch (e: SQLException){
-        println("connection to database: ${e.message}")
-    }
-     */
+    val germanArray = ArrayList<Students>()
+    val italyArray = ArrayList<Students>()
 
     try {
         println("Fill records...")
 
         val connection = DbUtils.connectToJdbcDatabase()
-        val stm = connection.createStatement()
-        /*for (i in 1..3){
-            Query.name = readLine()!!.toString()
-            Query.surname = readLine()!!.toString()
-            val insertUserQuery = "INSERT INTO student (last_name, first_name) \n" +
-                    "VALUES ('${Query.surname}', '${Query.name}');"
-            stm.executeUpdate(insertUserQuery)
-        }*/
+       // val stm = connection.createStatement()
 
-        //stm.executeQuery(Query.showTableRecord)
+        //stm.executeUpdate(Query.viewItaly)
+        //stm.executeUpdate(Query.viewGerman)
 
-        val resultSet = stm.executeQuery(Query.Select)
-        val surname = ArrayList<String>()
-
-        while (resultSet.next()){
-            println(resultSet.getString("first_name"))
-            surname.add(resultSet.getString("last_name"))
-        }
-        println("only surname from surname array list")
-        for (i in surname){
-            println(i)
-        }
-
-        //stm.executeUpdate(Query.addColumn)
-
-        stm.executeUpdate("UPDATE student SET country='Italy' WHERE student_id < 7")
-        stm.executeUpdate("UPDATE student SET country='Germany' WHERE student_id > 6")
+        println(Query.italianStudentsSelectView(italyArray, connection).toString())
+        println(Query.germanStudentsSelectView( germanArray, connection).toString())
 
 
     }catch (e: SQLException){

@@ -1,4 +1,4 @@
-# mysqlExercise
+# mysqlExercise-JDBC
 exercises by develhope course
 
 
